@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucky Fruit - Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: white;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            opacity: 0.9;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid #ffd700;
+        }
+
+        .stat-card h3 {
+            color: #ffd700;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .section h2 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .control-panel {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .control-panel h3 {
+            color: #ffd700;
+            margin-bottom: 15px;
+        }
+
+        .fruit-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .fruit-btn {
+            background: linear-gradient(135deg, #8B4513 0%, #654321 100%);
+            border: 3px solid transparent;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .fruit-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .fruit-btn.selected {
+            border-color: #ffd700;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+        }
+
+        .fruit-btn .emoji {
+            font-size: 40px;
+            margin-bottom: 5px;
+        }
+
+        .fruit-btn .name {
+            font-size: 12px;
+            color: white;
+        }
+
+        .set-result-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .set-result-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .set-result-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+
+        .bets-table {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            background: rgba(255, 215, 0, 0.2);
+            padding: 15px;
+            display: grid;
+            grid-template-columns: 150px 1fr 100px 100px 80px;
+            gap: 10px;
+            font-weight: bold;
+            border-bottom: 2px solid #ffd700;
+        }
+
+        .table-row {
+            padding: 15px;
+            display: grid;
+            grid-template-columns: 150px 1fr 100px 100px 80px;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            align-items: center;
+        }
+
+        .table-row:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .fruit-display {
+            font-size: 32px;
+        }
+
+        .user-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .user-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info h4 {
+            margin-bottom: 5px;
+        }
+
+        .user-info p {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .add-btn {
+            background: #22c55e;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .add-btn:hover {
+            background: #16a34a;
+        }
+
+        .history-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+        }
+
+        .history-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .history-item .emoji {
+            font-size: 40px;
+            margin-bottom: 5px;
+        }
+
+        .history-item .round {
+            font-size: 12px;
+            color: #ffd700;
+        }
+
+        .refresh-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .refresh-btn:hover {
+            background: #2563eb;
+        }
+
+        .current-round {
+            background: rgba(255, 215, 0, 0.2);
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .current-round h3 {
+            color: #ffd700;
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .current-round .timer {
+            font-size: 36px;
+            font-weight: bold;
+            color: white;
+            font-family: 'Courier New', monospace;
+        }
+
+        @media (max-width: 768px) {
+            .table-header, .table-row {
+                grid-template-columns: 120px 1fr 80px 80px 60px;
+                font-size: 12px;
+            }
+            
+            .fruit-display {
+                font-size: 24px;
+            }
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .fruit-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .fruit-summary-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .fruit-summary-item .emoji {
+            font-size: 36px;
+            margin-bottom: 5px;
+        }
+
+        .fruit-summary-item .label {
+            font-size: 12px;
+            color: #ffd700;
+            margin-bottom: 5px;
+        }
+
+        .fruit-summary-item .total-bet {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .fruit-summary-item .user-count {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 Lucky Fruit Admin Panel</h1>
+            <p>Control the game and monitor all players</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Players</h3>
+                <div class="value" id="totalPlayers">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Active Bets</h3>
+                <div class="value" id="activeBets">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Bet Amount</h3>
+                <div class="value" id="totalBetAmount">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Current Round</h3>
+                <div class="value" id="currentRound">1</div>
+            </div>
+        </div>
+
+        <div class="current-round">
+            <h3>⏱️ Next Spin In</h3>
+            <div class="timer" id="adminTimer">45</div>
+        </div>
+
+        <div class="section">
+            <h2>🎯 Control Next Result</h2>
+            <div class="control-panel">
+                <h3>Select Winning Fruit</h3>
+                <div class="fruit-selector" id="fruitSelector"></div>
+                <button class="set-result-btn" id="setResultBtn" disabled>SET RESULT</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📊 Current Round Bets Summary</h2>
+            <button class="refresh-btn" onclick="refreshData()">🔄 Refresh Data</button>
+            <div class="fruit-summary" id="fruitSummary"></div>
+        </div>
+
+        <div class="section">
+            <h2>📋 All Player Bets</h2>
+            <div class="bets-table">
+                <div class="table-header">
+                    <div>Player Name</div>
+                    <div>Phone</div>
+                    <div>Fruit</div>
+                    <div>Bet Amount</div>
+                    <div>Round</div>
+                </div>
+                <div id="betsTableBody"></div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>👥 Manage Users</h2>
+            <button class="refresh-btn" onclick="refreshData()">🔄 Refresh Users</button>
+            <div class="user-list" id="userList"></div>
+        </div>
+
+        <div class="section">
+            <h2>📜 Game History</h2>
+            <div class="history-grid" id="historyGrid"></div>
+        </div>
+    </div>
+
+    <script>
+        const FRUITS = [
+            { id: 'cherry', emoji: '🍒', name: 'Cherry', multiplier: 5 },
+            { id: 'lemon', emoji: '🍋', name: 'Lemon', multiplier: 5 },
+            { id: 'grape', emoji: '🍇', name: 'Grape', multiplier: 5 },
+            { id: 'orange', emoji: '🍊', name: 'Orange', multiplier: 5 },
+            { id: 'apple', emoji: '🍎', name: 'Apple', multiplier: 10 },
+            { id: 'watermelon', emoji: '🍉', name: 'Watermelon', multiplier: 15 },
+            { id: 'peach', emoji: '🍑', name: 'Peach', multiplier: 25 },
+            { id: 'strawberry', emoji: '🍓', name: 'Strawberry', multiplier: 45 }
+        ];
+
+        let selectedFruit = null;
+        let currentRoundBets = [];
+
+        function init() {
+            renderFruitSelector();
+            loadData();
+            startTimer();
+            setInterval(loadData, 2000); // Auto-refresh every 2 seconds
+        }
+
+        function renderFruitSelector() {
+            const container = document.getElementById('fruitSelector');
+            container.innerHTML = '';
+
+            FRUITS.forEach(fruit => {
+                const div = document.createElement('div');
+                div.className = 'fruit-btn';
+                div.innerHTML = `
+                    <div class="emoji">${fruit.emoji}</div>
+                    <div class="name">${fruit.name}</div>
+                `;
+                div.onclick = () => selectFruit(fruit);
+                container.appendChild(div);
+            });
+        }
+
+        function selectFruit(fruit) {
+            selectedFruit = fruit;
+            
+            document.querySelectorAll('.fruit-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            event.target.closest('.fruit-btn').classList.add('selected');
+            
+            document.getElementById('setResultBtn').disabled = false;
+        }
+
+        document.getElementById('setResultBtn').addEventListener('click', () => {
+            if (selectedFruit) {
+                localStorage.setItem('luckyFruitAdminResult', selectedFruit.emoji);
+                alert(`✅ Next result set to: ${selectedFruit.emoji} ${selectedFruit.name}\n\nThis will be used in the next spin!`);
+                selectedFruit = null;
+                document.querySelectorAll('.fruit-btn').forEach(btn => {
+                    btn.classList.remove('selected');
+                });
+                document.getElementById('setResultBtn').disabled = true;
+            }
+        });
+
+        function loadData() {
+            // Load all bets
+            const allBets = JSON.parse(localStorage.getItem('luckyFruitAllBets') || '[]');
+            const currentRound = parseInt(localStorage.getItem('luckyFruitRound') || '1');
+            
+            // Filter bets for current round
+            currentRoundBets = allBets.filter(bet => bet.round === currentRound);
+            
+            // Update stats
+            const uniquePlayers = new Set(currentRoundBets.map(b => b.userId));
+            document.getElementById('totalPlayers').textContent = uniquePlayers.size;
+            document.getElementById('activeBets').textContent = currentRoundBets.length;
+            
+            const totalBet = currentRoundBets.reduce((sum, bet) => sum + bet.amount, 0);
+            document.getElementById('totalBetAmount').textContent = totalBet.toLocaleString();
+            document.getElementById('currentRound').textContent = currentRound;
+            
+            // Render bets summary by fruit
+            renderFruitSummary();
+            
+            // Render bets table
+            renderBetsTable();
+            
+            // Load users
+            loadUsers();
+            
+            // Load history
+            loadHistory();
+        }
+
+        function renderFruitSummary() {
+            const container = document.getElementById('fruitSummary');
+            container.innerHTML = '';
+
+            // Group bets by fruit
+            const fruitBets = {};
+            FRUITS.forEach(fruit => {
+                fruitBets[fruit.emoji] = {
+                    fruit: fruit,
+                    totalBet: 0,
+                    userCount: 0,
+                    users: new Set()
+                };
+            });
+
+            currentRoundBets.forEach(bet => {
+                if (fruitBets[bet.fruit]) {
+                    fruitBets[bet.fruit].totalBet += bet.amount;
+                    fruitBets[bet.fruit].users.add(bet.userId);
+                }
+            });
+
+            Object.values(fruitBets).forEach(data => {
+                data.userCount = data.users.size;
+                
+                const div = document.createElement('div');
+                div.className = 'fruit-summary-item';
+                div.innerHTML = `
+                    <div class="emoji">${data.fruit.emoji}</div>
+                    <div class="label">${data.fruit.name}</div>
+                    <div class="total-bet">💰 ${data.totalBet.toLocaleString()}</div>
+                    <div class="user-count">👥 ${data.userCount} player${data.userCount !== 1 ? 's' : ''}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderBetsTable() {
+            const container = document.getElementById('betsTableBody');
+            container.innerHTML = '';
+
+            if (currentRoundBets.length === 0) {
+                container.innerHTML = '<div class="no-data">No bets placed for current round</div>';
+                return;
+            }
+
+            // Sort by timestamp (newest first)
+            const sortedBets = [...currentRoundBets].sort((a, b) => b.timestamp - a.timestamp);
+
+            sortedBets.forEach(bet => {
+                const div = document.createElement('div');
+                div.className = 'table-row';
+                div.innerHTML = `
+                    <div>${bet.userName}</div>
+                    <div>+91 ${bet.userId.substring(5, 15)}</div>
+                    <div><span class="fruit-display">${bet.fruit}</span> ${bet.fruitName}</div>
+                    <div>💰 ${bet.amount.toLocaleString()}</div>
+                    <div>#${bet.round}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function loadUsers() {
+            const container = document.getElementById('userList');
+            container.innerHTML = '';
+
+            const allUsers = JSON.parse(localStorage.getItem('luckyFruitAllUsers') || '[]');
+            
+            // Also get user from single player mode
+            const singleUser = localStorage.getItem('luckyFruitUser');
+            if (singleUser) {
+                const user = JSON.parse(singleUser);
+                const existingUser = allUsers.find(u => u.id === user.id);
+                if (!existingUser) {
+                    allUsers.push({
+                        id: user.id,
+                        name: user.name,
+                        phone: user.phone,
+                        balance: user.balance,
+                        winnings: user.todayWinnings
+                    });
+                } else {
+                    existingUser.balance = user.balance;
+                    existingUser.winnings = user.todayWinnings;
+                }
+            }
+
+            if (allUsers.length === 0) {
+                container.innerHTML = '<div class="no-data">No users found</div>';
+                return;
+            }
+
+            allUsers.forEach(user => {
+                const div = document.createElement('div');
+                div.className = 'user-item';
+                div.innerHTML = `
+                    <div class="user-info">
+                        <h4>${user.name}</h4>
+                        <p>Balance: ${(user.balance || 0).toLocaleString()} | Winnings: ${(user.winnings || 0).toLocaleString()}</p>
+                    </div>
+                    <div class="user-actions">
+                        <button class="add-btn" onclick="addCoins('${user.id}', 10000)">+10K</button>
+                        <button class="add-btn" onclick="addCoins('${user.id}', 50000)">+50K</button>
+                        <button class="add-btn" onclick="addCoins('${user.id}', 100000)">+100K</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addCoins(userId, amount) {
+            // Update in single user mode
+            const singleUser = localStorage.getItem('luckyFruitUser');
+            if (singleUser) {
+                const user = JSON.parse(singleUser);
+                if (user.id === userId) {
+                    user.balance += amount;
+                    localStorage.setItem('luckyFruitUser', JSON.stringify(user));
+                }
+            }
+
+            // Update in all users list
+            const allUsers = JSON.parse(localStorage.getItem('luckyFruitAllUsers') || '[]');
+            const userIndex = allUsers.findIndex(u => u.id === userId);
+            if (userIndex !== -1) {
+                allUsers[userIndex].balance = (allUsers[userIndex].balance || 0) + amount;
+                localStorage.setItem('luckyFruitAllUsers', JSON.stringify(allUsers));
+            }
+
+            alert(`✅ Added ${amount.toLocaleString()} coins to user!`);
+            loadData();
+        }
+
+        function loadHistory() {
+            const container = document.getElementById('historyGrid');
+            container.innerHTML = '';
+
+            const history = JSON.parse(localStorage.getItem('luckyFruitGameHistory') || '[]');
+
+            if (history.length === 0) {
+                container.innerHTML = '<div class="no-data">No game history yet</div>';
+                return;
+            }
+
+            history.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                div.innerHTML = `
+                    <div class="emoji">${item.fruit}</div>
+                    <div class="round">Round ${item.round}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function startTimer() {
+            // Sync with main game timer
+            setInterval(() => {
+                const timer = document.getElementById('adminTimer');
+                if (timer) {
+                    let currentTime = parseInt(timer.textContent);
+                    currentTime--;
+                    if (currentTime < 0) currentTime = 45;
+                    timer.textContent = currentTime;
+                }
+            }, 1000);
+        }
+
+        function refreshData() {
+            loadData();
+            alert('✅ Data refreshed!');
+        }
+
+        // Initialize
+        window.onload = () => {
+            init();
+        };
+    </script>
+</body>
+</html>

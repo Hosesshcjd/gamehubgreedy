@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucky Fruit - Multiplayer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .user-details h3 {
+            color: white;
+            font-size: 18px;
+            margin-bottom: 3px;
+        }
+
+        .user-details p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .icon-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .icon-btn i {
+            color: #667eea;
+            font-size: 18px;
+        }
+
+        .game-container {
+            background: linear-gradient(180deg, #6b3e0f 0%, #3d2208 100%);
+            border-radius: 20px;
+            padding: 20px 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            border: 6px solid #d4a05c;
+        }
+
+        .game-title {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .game-title h1 {
+            color: #ffd700;
+            font-size: 32px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 5px;
+        }
+
+        .round-info {
+            color: #fff3cd;
+            font-size: 14px;
+        }
+
+        .timer-container {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 15px;
+            border: 3px solid #ffd700;
+        }
+
+        .timer-label {
+            color: white;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .timer-display {
+            font-size: 36px;
+            font-weight: bold;
+            color: #ffd700;
+            font-family: 'Courier New', monospace;
+        }
+
+        .fruit-selection {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .selection-title {
+            color: #ffd700;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .fruit-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .fruit-option {
+            background: linear-gradient(135deg, #8B4513 0%, #654321 100%);
+            border: 3px solid transparent;
+            border-radius: 12px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            position: relative;
+        }
+
+        .fruit-option:hover {
+            transform: scale(1.05);
+        }
+
+        .fruit-option.selected {
+            border-color: #ffd700;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            transform: scale(1.05);
+        }
+
+        .fruit-emoji {
+            font-size: 40px;
+            margin-bottom: 5px;
+        }
+
+        .fruit-name {
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .fruit-multiplier {
+            color: #ffd700;
+            font-size: 10px;
+        }
+
+        .fruit-bet-amount {
+            background: rgba(0, 0, 0, 0.6);
+            color: #ffd700;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .bet-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+
+        .bet-title {
+            color: #ffd700;
+            text-align: center;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .bet-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ffd700;
+            border-radius: 8px;
+            font-size: 16px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            margin-bottom: 8px;
+        }
+
+        .quick-bet-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .quick-bet-btn {
+            padding: 8px;
+            background: linear-gradient(135deg, #ffd700 0%, #ffb700 100%);
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .result-display {
+            background: linear-gradient(135deg, #8B4513 0%, #654321 100%);
+            border: 4px solid #ffd700;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            text-align: center;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .result-fruit {
+            font-size: 80px;
+            margin-bottom: 10px;
+            animation: fruitSpin 0.5s ease-out;
+        }
+
+        @keyframes fruitSpin {
+            0% { transform: scale(0) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(180deg); }
+            100% { transform: scale(1) rotate(360deg); }
+        }
+
+        .result-text {
+            color: #ffd700;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .win-amount {
+            color: #90EE90;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #8B4513 0%, #654321 100%);
+            border: 2px solid #ffd700;
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .stat-label {
+            color: #fff3cd;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .stat-value i {
+            color: #ffd700;
+        }
+
+        .history-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+
+        .history-title {
+            color: #ffd700;
+            font-size: 14px;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .history-scroll {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .history-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            padding: 8px;
+            text-align: center;
+            min-width: 60px;
+            flex-shrink: 0;
+        }
+
+        .history-item .emoji {
+            font-size: 32px;
+        }
+
+        .history-item .round {
+            color: white;
+            font-size: 10px;
+            margin-top: 3px;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 10px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 10px;
+            padding: 10px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            font-size: 10px;
+        }
+
+        .nav-btn i {
+            font-size: 20px;
+        }
+
+        .nav-btn.active {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            max-width: 500px;
+            margin: 50px auto;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #ff4b2b;
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .modal h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .shop-items {
+            display: grid;
+            gap: 15px;
+        }
+
+        .shop-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .shop-item-info h4 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .shop-item-info p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .shop-buy-btn {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .leaderboard-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .leaderboard-item {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 12px;
+            padding: 15px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .leaderboard-rank {
+            font-size: 24px;
+            font-weight: bold;
+            min-width: 40px;
+        }
+
+        .leaderboard-info {
+            flex: 1;
+        }
+
+        .leaderboard-info h4 {
+            font-size: 16px;
+            margin-bottom: 3px;
+        }
+
+        .leaderboard-info p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .leaderboard-prize {
+            text-align: right;
+            font-weight: bold;
+        }
+
+        .transaction-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .transaction-item {
+            background: #f5f5f5;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .transaction-info p:first-child {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .transaction-info p:last-child {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .transaction-amount {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .transaction-amount.positive {
+            color: #22c55e;
+        }
+
+        .transaction-amount.negative {
+            color: #ef4444;
+        }
+
+        .share-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .share-btn {
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .share-btn.whatsapp {
+            background: #25D366;
+        }
+
+        .share-btn.instagram {
+            background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #ffd700;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .mb-80 {
+            margin-bottom: 80px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="user-info">
+                <div class="user-avatar">👤</div>
+                <div class="user-details">
+                    <h3 id="userName">Player</h3>
+                    <p id="userPhone">+91 XXXXXXXXXX</p>
+                </div>
+            </div>
+            <div class="header-buttons">
+                <button class="icon-btn" id="shareBtn"><i class="fas fa-share-alt"></i></button>
+                <button class="icon-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+
+        <div class="game-container mb-80">
+            <div class="game-title">
+                <h1>🍓 Lucky Fruit</h1>
+                <p class="round-info">Round <span id="roundNumber">1</span> of today</p>
+            </div>
+
+            <div class="timer-container">
+                <p class="timer-label">⏱️ Next Spin In</p>
+                <div class="timer-display" id="timer">45</div>
+            </div>
+
+            <div class="fruit-selection">
+                <p class="selection-title">🎯 Select Fruits & Set Bet (0/6)</p>
+                <div class="fruit-grid" id="fruitGrid"></div>
+            </div>
+
+            <!-- Selected Fruits Display -->
+            <div class="selected-display">
+                <p class="selected-title">Your Selections</p>
+                <div class="selected-fruits" id="selectedFruits">
+                    <p style="color: #fff; text-align: center; width: 100%;">No fruits selected</p>
+                </div>
+            </div>
+
+            <div class="bet-section">
+                <p class="bet-title">💰 Enter Your Bet Amount</p>
+                <input type="number" class="bet-input" id="betAmount" value="100" min="10" placeholder="Enter amount">
+                <div class="quick-bet-buttons">
+                    <button class="quick-bet-btn" onclick="setBetAmount(100)">100</button>
+                    <button class="quick-bet-btn" onclick="setBetAmount(500)">500</button>
+                    <button class="quick-bet-btn" onclick="setBetAmount(1000)">1000</button>
+                    <button class="quick-bet-btn" onclick="setBetAmount(5000)">5000</button>
+                </div>
+            </div>
+
+            <div class="result-display" id="resultDisplay">
+                <p class="result-text">Waiting for spin...</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <p class="stat-label">Balance</p>
+                    <div class="stat-value">
+                        <i class="fas fa-coins"></i>
+                        <span id="balance">100000</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Today's Winnings</p>
+                    <div class="stat-value">
+                        <i class="fas fa-trophy"></i>
+                        <span id="todayWinnings">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="history-container">
+                <p class="history-title">📊 Recent Results</p>
+                <div class="history-scroll" id="historyScroll"></div>
+            </div>
+        </div>
+
+        <div class="bottom-nav">
+            <button class="nav-btn active" onclick="showSection('game')">
+                <i class="fas fa-gamepad"></i>
+                <span>Game</span>
+            </button>
+            <button class="nav-btn" onclick="showSection('shop')">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Shop</span>
+            </button>
+            <button class="nav-btn" onclick="showSection('withdraw')">
+                <i class="fas fa-wallet"></i>
+                <span>Withdraw</span>
+            </button>
+            <button class="nav-btn" onclick="showSection('leaderboard')">
+                <i class="fas fa-trophy"></i>
+                <span>Leaders</span>
+            </button>
+            <button class="nav-btn" onclick="showSection('history')">
+                <i class="fas fa-history"></i>
+                <span>History</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="shopModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('shopModal')">×</button>
+            <h3>🛒 Buy Coins</h3>
+            <div class="shop-items">
+                <div class="shop-item">
+                    <div class="shop-item-info">
+                        <h4>🪙 50,000 Coins</h4>
+                        <p>Best for beginners</p>
+                    </div>
+                    <button class="shop-buy-btn" onclick="buyCoins(50000, 100)">₹100</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-item-info">
+                        <h4>🪙 250,000 Coins</h4>
+                        <p>Most Popular!</p>
+                    </div>
+                    <button class="shop-buy-btn" onclick="buyCoins(250000, 500)">₹500</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-item-info">
+                        <h4>🪙 1,050,000 Coins</h4>
+                        <p>Best Value - 5% Bonus!</p>
+                    </div>
+                    <button class="shop-buy-btn" onclick="buyCoins(1050000, 2000)">₹2000</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="withdrawModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('withdrawModal')">×</button>
+            <h3>💸 Withdraw Coins</h3>
+            <div class="shop-items">
+                <div class="shop-item">
+                    <div class="shop-item-info">
+                        <h4>100,000 Coins</h4>
+                        <p>Get ₹150 in your account</p>
+                    </div>
+                    <button class="shop-buy-btn" onclick="withdrawCoins(100000, 150)">Withdraw</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-item-info">
+                        <h4>250,000 Coins</h4>
+                        <p>Get ₹400 in your account</p>
+                    </div>
+                    <button class="shop-buy-btn" onclick="withdrawCoins(250000, 400)">Withdraw</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-item-info">
+                        <h4>1,000,000 Coins</h4>
+                        <p>Get ₹1700 in your account</p>
+                    </div>
+                    <button class="shop-buy-btn" onclick="withdrawCoins(1000000, 1700)">Withdraw</button>
+                </div>
+            </div>
+            <div class="input-group" style="margin-top: 20px;">
+                <label>Bank Account / UPI ID</label>
+                <input type="text" id="withdrawAccount" placeholder="Enter account details">
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="leaderboardModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('leaderboardModal')">×</button>
+            <h3>🏆 Leaderboard</h3>
+            <p style="text-align: center; color: #666; margin-bottom: 20px;">
+                Resets in: <span id="leaderboardTimer" style="font-weight: bold; color: #667eea;">23:45:30</span>
+            </p>
+            <div class="leaderboard-list" id="leaderboardList"></div>
+        </div>
+    </div>
+
+    <div class="modal" id="historyModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('historyModal')">×</button>
+            <h3>📜 Transaction History</h3>
+            <div class="transaction-list" id="transactionList"></div>
+        </div>
+    </div>
+
+    <div class="modal" id="shareModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('shareModal')">×</button>
+            <h3>📤 Share & Earn</h3>
+            <p style="text-align: center; margin-bottom: 15px;">Share your referral link and earn 5000 coins!</p>
+            <div class="input-group">
+                <label>Your Referral Link</label>
+                <input type="text" id="referralLink" readonly style="background: #f0f0f0;">
+            </div>
+            <div class="share-buttons">
+                <button class="share-btn whatsapp" onclick="shareWhatsApp()">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </button>
+                <button class="share-btn instagram" onclick="shareInstagram()">
+                    <i class="fab fa-instagram"></i> Instagram
+                </button>
+            </div>
+            <button class="btn-primary" onclick="copyReferralLink()" style="margin-top: 15px;">
+                📋 Copy Link
+            </button>
+        </div>
+    </div>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-item-info">
+                        <h4>🪙 250,000 Coins</h4>
+                        <p>Most Popular!</p>
+                    </div>
+                    <button class="shop-buy-btn" onclick="buyCoins(250000, 500)">₹500</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-item-info">
+                        <h4>🪙 1,050,000 Coins</h4>
+                        <p>Best Value - 5% Bonus!</p>
+                    </div>
+                    <button class="shop-buy-btn" onclick="buyCoins(1050000, 2000)">₹2000</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="withdrawModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('withdrawModal')">×</button>
+            <h3>💸 Withdraw Coins</h3>
+            <div class="shop-items">
+                <div class="shop-item">
+                    <div class="shop-item-info">
+                        <h4>100,000 Coins</h4>
+                        <p>Get ₹150 in your account</p>
+                    </div>
+                    <button class="shop-buy-btn" onclick="withdrawCoins(100000, 150)">Withdraw</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-item-info">
+                        <h4>250,000 Coins</h4>
+                        <p>Get ₹400 in your account</p>
+                    </div>
+                    <button class="shop-buy-btn" onclick="withdrawCoins(250000, 400)">Withdraw</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-item-info">
+                        <h4>1,000,000 Coins</h4>
+                        <p>Get ₹1700 in your account</p>
+                    </div>
+                    <button class="shop-buy-btn" onclick="withdrawCoins(1000000, 1700)">Withdraw</button>
+                </div>
+            </div>
+            <div class="input-group" style="margin-top: 20px;">
+                <label>Bank Account / UPI ID</label>
+                <input type="text" id="withdrawAccount" placeholder="Enter account details">
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="leaderboardModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('leaderboardModal')">×</button>
+            <h3>🏆 Leaderboard</h3>
+            <p style="text-align: center; color: #666; margin-bottom: 20px;">
+                Resets in: <span id="leaderboardTimer" style="font-weight: bold; color: #667eea;">23:45:30</span>
+            </p>
+            <div class="leaderboard-list" id="leaderboardList"></div>
+        </div>
+    </div>
+
+    <div class="modal" id="historyModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('historyModal')">×</button>
+            <h3>📜 Transaction History</h3>
+            <div class="transaction-list" id="transactionList"></div>
+        </div>
+    </div>
+
+    <div class="modal" id="shareModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('shareModal')">×</button>
+            <h3>📤 Share & Earn</h3>
+            <p style="text-align: center; margin-bottom: 15px;">Share your referral link and earn 5000 coins!</p>
+            <div class="input-group">
+                <label>Your Referral Link</label>
+                <input type="text" id="referralLink" readonly style="background: #f0f0f0;">
+            </div>
+            <div class="share-buttons">
+                <button class="share-btn whatsapp" onclick="shareWhatsApp()">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </button>
+                <button class="share-btn instagram" onclick="shareInstagram()">
+                    <i class="fab fa-instagram"></i> Instagram
+                </button>
+            </div>
+            <button class="btn-primary" onclick="copyReferralLink()" style="margin-top: 15px;">
+                📋 Copy Link
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const FRUITS = [
+            { id: 'cherry', emoji: '🍒', name: 'Cherry', multiplier: 5 },
+            { id: 'lemon', emoji: '🍋', name: 'Lemon', multiplier: 5 },
+            { id: 'grape', emoji: '🍇', name: 'Grape', multiplier: 5 },
+            { id: 'orange', emoji: '🍊', name: 'Orange', multiplier: 5 },
+            { id: 'apple', emoji: '🍎', name: 'Apple', multiplier: 10 },
+            { id: 'watermelon', emoji: '🍉', name: 'Watermelon', multiplier: 15 },
+            { id: 'peach', emoji: '🍑', name: 'Peach', multiplier: 25 },
+            { id: 'strawberry', emoji: '🍓', name: 'Strawberry', multiplier: 45 }
+        ];
+
+        const SPIN_INTERVAL = 45;
+
+        let currentUser = {
+            id: 'user_' + Date.now(),
+            name: 'Player',
+            phone: '1234567890',
+            balance: 2000,
+            todayWinnings: 0,
+            referralCode: 'LF' + Math.random().toString(36).substring(2, 8).toUpperCase()
+        };
+
+        let selectedFruits = {}; // Object to store fruit ID and bet amount
+        let betAmount = 100;
+        let timeRemaining = SPIN_INTERVAL;
+        let timerInterval = null;
+        let roundNumber = 1;
+        let transactions = [];
+        let gameHistory = [];
+        const MAX_SELECTIONS = 6;
+
+        function init() {
+            loadData();
+            renderFruitGrid();
+            initGame();
+            startTimer();
+        }
+
+        function loadData() {
+            const savedUser = localStorage.getItem('luckyFruitUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+            } else {
+                saveUser();
+            }
+
+            const savedHistory = localStorage.getItem('luckyFruitGameHistory');
+            if (savedHistory) {
+                gameHistory = JSON.parse(savedHistory);
+            }
+
+            const savedTransactions = localStorage.getItem('luckyFruitTransactions_' + currentUser.id);
+            if (savedTransactions) {
+                transactions = JSON.parse(savedTransactions);
+            }
+
+            const savedRound = localStorage.getItem('luckyFruitRound');
+            if (savedRound) {
+                roundNumber = parseInt(savedRound);
+            }
+        }
+
+        function saveUser() {
+            localStorage.setItem('luckyFruitUser', JSON.stringify(currentUser));
+        }
+
+        function saveTransaction(type, amount, description) {
+            const transaction = {
+                type,
+                amount,
+                description,
+                date: new Date().toLocaleString()
+            };
+            transactions.unshift(transaction);
+            if (transactions.length > 50) transactions = transactions.slice(0, 50);
+            localStorage.setItem('luckyFruitTransactions_' + currentUser.id, JSON.stringify(transactions));
+        }
+
+        function saveGameHistory(result) {
+            gameHistory.unshift(result);
+            if (gameHistory.length > 20) gameHistory = gameHistory.slice(0, 20);
+            localStorage.setItem('luckyFruitGameHistory', JSON.stringify(gameHistory));
+        }
+
+        function initGame() {
+            document.getElementById('userName').textContent = currentUser.name;
+            document.getElementById('userPhone').textContent = '+91 ' + currentUser.phone;
+            document.getElementById('balance').textContent = currentUser.balance.toLocaleString();
+            document.getElementById('todayWinnings').textContent = currentUser.todayWinnings.toLocaleString();
+            document.getElementById('referralLink').value = window.location.origin + window.location.pathname + '?ref=' + currentUser.referralCode;
+            document.getElementById('roundNumber').textContent = roundNumber;
+            renderHistory();
+        }
+
+        function renderFruitGrid() {
+            const grid = document.getElementById('fruitGrid');
+            grid.innerHTML = '';
+            
+            FRUITS.forEach(fruit => {
+                const isSelected = selectedFruits.hasOwnProperty(fruit.id);
+                const currentBet = selectedFruits[fruit.id] || 0;
+                
+                const div = document.createElement('div');
+                div.className = 'fruit-option' + (isSelected ? ' selected' : '');
+                div.innerHTML = `
+                    <div class="fruit-emoji">${fruit.emoji}</div>
+                    <div class="fruit-name">${fruit.name}</div>
+                    <div class="fruit-multiplier">${fruit.multiplier}x</div>
+                    ${isSelected ? `<div class="fruit-bet-amount">${currentBet}</div>` : ''}
+                `;
+                
+                div.onclick = () => selectFruit(fruit);
+                grid.appendChild(div);
+            });
+
+            updateSelectionCount();
+        }
+
+        function selectFruit(fruit) {
+            const selectionCount = Object.keys(selectedFruits).length;
+            
+            if (selectedFruits.hasOwnProperty(fruit.id)) {
+                // Already selected - remove it
+                delete selectedFruits[fruit.id];
+            } else {
+                // Not selected - check if we can add more
+                if (selectionCount >= MAX_SELECTIONS) {
+                    alert(`Maximum ${MAX_SELECTIONS} fruits allowed per round!`);
+                    return;
+                }
+                
+                // Add with current bet amount
+                if (betAmount <= 0) {
+                    alert('Please enter a bet amount first!');
+                    return;
+                }
+                
+                selectedFruits[fruit.id] = betAmount;
+            }
+            
+            renderFruitGrid();
+            renderSelectedFruitsDisplay();
+        }
+
+        function renderSelectedFruitsDisplay() {
+            const container = document.getElementById('selectedFruits');
+            const selectionCount = Object.keys(selectedFruits).length;
+            
+            if (selectionCount === 0) {
+                container.innerHTML = '<p style="color: #fff; text-align: center; width: 100%;">No fruits selected</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            Object.entries(selectedFruits).forEach(([fruitId, amount]) => {
+                const fruit = FRUITS.find(f => f.id === fruitId);
+                const div = document.createElement('div');
+                div.className = 'selected-fruit-item';
+                div.innerHTML = `
+                    <div class="emoji">${fruit.emoji}</div>
+                    <div class="bet-amount">💰 ${amount}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function updateSelectionCount() {
+            const count = Object.keys(selectedFruits).length;
+            const title = document.querySelector('.selection-title');
+            title.textContent = `🎯 Select Fruits & Set Bet (${count}/${MAX_SELECTIONS})`;
+        }
+
+        function setBetAmount(amount) {
+            betAmount = amount;
+            document.getElementById('betAmount').value = amount;
+        }
+
+        document.getElementById('betAmount').addEventListener('input', (e) => {
+            betAmount = parseInt(e.target.value) || 10;
+        });
+
+        // Update bet amount for selected fruits when bet input changes
+        document.getElementById('betAmount').addEventListener('change', (e) => {
+            const newAmount = parseInt(e.target.value) || 10;
+            
+            // Ask if user wants to update existing bets
+            if (Object.keys(selectedFruits).length > 0) {
+                if (confirm('Update bet amount for all selected fruits?')) {
+                    Object.keys(selectedFruits).forEach(fruitId => {
+                        selectedFruits[fruitId] = newAmount;
+                    });
+                    renderFruitGrid();
+                    renderSelectedFruitsDisplay();
+                }
+            }
+        });
+
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                document.getElementById('timer').textContent = timeRemaining;
+                
+                if (timeRemaining <= 0) {
+                    performSpin();
+                    timeRemaining = SPIN_INTERVAL;
+                }
+            }, 1000);
+        }
+
+        function performSpin() {
+            const selectionCount = Object.keys(selectedFruits).length;
+            
+            // Calculate total bet
+            const totalBet = Object.values(selectedFruits).reduce((sum, amount) => sum + amount, 0);
+            
+            // Save all players' bets to database
+            saveBetToServer();
+
+            if (selectionCount === 0 || totalBet <= 0) {
+                document.getElementById('resultDisplay').innerHTML = `
+                    <p class="result-text">No bet placed</p>
+                `;
+                roundNumber++;
+                document.getElementById('roundNumber').textContent = roundNumber;
+                localStorage.setItem('luckyFruitRound', roundNumber);
+                return;
+            }
+
+            if (totalBet > currentUser.balance) {
+                document.getElementById('resultDisplay').innerHTML = `
+                    <p class="result-text" style="color: #ff4b2b;">Insufficient Balance!</p>
+                    <p style="color: white; font-size: 14px;">Need ${totalBet} coins, you have ${currentUser.balance}</p>
+                `;
+                return;
+            }
+
+            currentUser.balance -= totalBet;
+            saveTransaction('bet', -totalBet, `Placed bets on ${selectionCount} fruit(s)`);
+
+            document.getElementById('resultDisplay').innerHTML = '<div class="spinner"></div>';
+
+            setTimeout(() => {
+                // Get result from server (or use admin-controlled result)
+                const resultFruit = getSpinResult();
+                
+                // Check if user won on any selected fruit
+                const wonFruitId = Object.keys(selectedFruits).find(fruitId => fruitId === resultFruit.id);
+                let winAmount = 0;
+
+                if (wonFruitId) {
+                    const betOnWinningFruit = selectedFruits[wonFruitId];
+                    winAmount = betOnWinningFruit * resultFruit.multiplier;
+                    currentUser.balance += winAmount;
+                    currentUser.todayWinnings += (winAmount - totalBet);
+                    saveTransaction('win', winAmount, `Won with ${resultFruit.name} (bet: ${betOnWinningFruit})`);
+
+                    document.getElementById('resultDisplay').innerHTML = `
+                        <div class="result-fruit">${resultFruit.emoji}</div>
+                        <p class="result-text">🎉 YOU WON!</p>
+                        <p class="win-amount">+${winAmount.toLocaleString()} coins</p>
+                        <p style="color: #ffd700; font-size: 14px;">Bet: ${betOnWinningFruit} × ${resultFruit.multiplier}x</p>
+                    `;
+                } else {
+                    saveTransaction('loss', -totalBet, `Lost - Result was ${resultFruit.name}`);
+                    
+                    document.getElementById('resultDisplay').innerHTML = `
+                        <div class="result-fruit">${resultFruit.emoji}</div>
+                        <p class="result-text" style="color: #ff6b6b;">Try Again!</p>
+                        <p style="color: white; font-size: 14px;">${resultFruit.name}</p>
+                        <p style="color: #fff; font-size: 12px; opacity: 0.7;">Lost: ${totalBet} coins</p>
+                    `;
+                }
+
+                saveGameHistory({
+                    round: roundNumber,
+                    fruit: resultFruit.emoji,
+                    name: resultFruit.name
+                });
+
+                saveUser();
+                document.getElementById('balance').textContent = currentUser.balance.toLocaleString();
+                document.getElementById('todayWinnings').textContent = currentUser.todayWinnings.toLocaleString();
+                
+                roundNumber++;
+                document.getElementById('roundNumber').textContent = roundNumber;
+                localStorage.setItem('luckyFruitRound', roundNumber);
+                
+                renderHistory();
+                selectedFruits = {}; // Clear selections
+                renderFruitGrid();
+                renderSelectedFruitsDisplay();
+            }, 1500);
+        }
+
+        function getSpinResult() {
+            // Check if admin has set a result
+            const adminResult = localStorage.getItem('luckyFruitAdminResult');
+            if (adminResult) {
+                localStorage.removeItem('luckyFruitAdminResult');
+                const resultEmoji = adminResult;
+                return FRUITS.find(f => f.emoji === resultEmoji) || FRUITS[Math.floor(Math.random() * FRUITS.length)];
+            }
+            
+            // Random result
+            return FRUITS[Math.floor(Math.random() * FRUITS.length)];
+        }
+
+        function saveBetToServer() {
+            const selectionCount = Object.keys(selectedFruits).length;
+            if (selectionCount === 0) return;
+            
+            // Save bet to database for admin to see
+            const allBets = JSON.parse(localStorage.getItem('luckyFruitAllBets') || '[]');
+            
+            // Add each fruit bet separately
+            Object.entries(selectedFruits).forEach(([fruitId, amount]) => {
+                const fruit = FRUITS.find(f => f.id === fruitId);
+                allBets.push({
+                    userId: currentUser.id,
+                    userName: currentUser.name,
+                    fruit: fruit.emoji,
+                    fruitName: fruit.name,
+                    amount: amount,
+                    round: roundNumber,
+                    timestamp: new Date().getTime()
+                });
+            });
+            
+            // Keep only last 100 bets
+            if (allBets.length > 100) {
+                allBets.splice(0, allBets.length - 100);
+            }
+            
+            localStorage.setItem('luckyFruitAllBets', JSON.stringify(allBets));
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('historyScroll');
+            container.innerHTML = '';
+
+            if (gameHistory.length === 0) {
+                container.innerHTML = '<p style="color: #fff; text-align: center; width: 100%; padding: 10px;">No history yet</p>';
+                return;
+            }
+
+            gameHistory.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                div.innerHTML = `
+                    <div class="emoji">${item.fruit}</div>
+                    <div class="round">Round ${item.round}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function showSection(section) {
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.nav-btn').classList.add('active');
+
+            if (section === 'shop') {
+                document.getElementById('shopModal').style.display = 'block';
+            } else if (section === 'withdraw') {
+                document.getElementById('withdrawModal').style.display = 'block';
+            } else if (section === 'leaderboard') {
+                renderLeaderboard();
+                document.getElementById('leaderboardModal').style.display = 'block';
+            } else if (section === 'history') {
+                renderTransactionHistory();
+                document.getElementById('historyModal').style.display = 'block';
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.nav-btn').classList.add('active');
+        }
+
+        function buyCoins(coins, price) {
+            if (confirm(`Purchase ${coins.toLocaleString()} coins for ₹${price}?`)) {
+                currentUser.balance += coins;
+                saveUser();
+                saveTransaction('purchase', coins, `Purchased ${coins.toLocaleString()} coins for ₹${price}`);
+                document.getElementById('balance').textContent = currentUser.balance.toLocaleString();
+                alert('Purchase successful! Coins added to your account.');
+            }
+        }
+
+        function withdrawCoins(coins, amount) {
+            const account = document.getElementById('withdrawAccount').value;
+            
+            if (!account) {
+                alert('Please enter your bank account or UPI ID!');
+                return;
+            }
+
+            if (currentUser.balance < coins) {
+                alert('Insufficient balance!');
+                return;
+            }
+
+            if (confirm(`Withdraw ${coins.toLocaleString()} coins for ₹${amount}?\nMoney will be sent to: ${account}`)) {
+                currentUser.balance -= coins;
+                saveUser();
+                saveTransaction('withdrawal', -coins, `Withdrew ${coins.toLocaleString()} coins for ₹${amount} to ${account}`);
+                document.getElementById('balance').textContent = currentUser.balance.toLocaleString();
+                alert('Withdrawal request submitted! Money will be credited within 24-48 hours.');
+                closeModal('withdrawModal');
+            }
+        }
+
+        document.getElementById('shareBtn').addEventListener('click', () => {
+            document.getElementById('shareModal').style.display = 'block';
+        });
+
+        function shareWhatsApp() {
+            const text = `🍓 Join Lucky Fruit and get 2,000 FREE coins! Use my referral code: ${currentUser.referralCode}\n\n${document.getElementById('referralLink').value}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        function shareInstagram() {
+            alert('Copy the referral link and share it on your Instagram story or bio!');
+            copyReferralLink();
+        }
+
+        function copyReferralLink() {
+            const link = document.getElementById('referralLink');
+            link.select();
+            document.execCommand('copy');
+            alert('Referral link copied to clipboard!');
+        }
+
+        function renderLeaderboard() {
+            const container = document.getElementById('leaderboardList');
+            container.innerHTML = '';
+
+            // Get all users from localStorage (in real app, get from server)
+            const allUsers = JSON.parse(localStorage.getItem('luckyFruitAllUsers') || '[]');
+            
+            // Add current user if not exists
+            const userExists = allUsers.find(u => u.id === currentUser.id);
+            if (!userExists) {
+                allUsers.push({
+                    id: currentUser.id,
+                    name: currentUser.name,
+                    winnings: currentUser.todayWinnings
+                });
+            } else {
+                userExists.winnings = currentUser.todayWinnings;
+            }
+
+            allUsers.sort((a, b) => b.winnings - a.winnings);
+            localStorage.setItem('luckyFruitAllUsers', JSON.stringify(allUsers));
+
+            const prizes = {
+                1: '250,000 coins',
+                2: '150,000 coins',
+                3: '100,000 coins'
+            };
+
+            allUsers.slice(0, 20).forEach((player, index) => {
+                const rank = index + 1;
+                let prize = prizes[rank] || (rank <= 10 ? '50,000 coins' : '');
+                
+                const div = document.createElement('div');
+                div.className = 'leaderboard-item';
+                div.innerHTML = `
+                    <div class="leaderboard-rank">#${rank}</div>
+                    <div class="leaderboard-info">
+                        <h4>${player.name}</h4>
+                        <p>Winnings: ${player.winnings.toLocaleString()} coins</p>
+                    </div>
+                    ${prize ? `<div class="leaderboard-prize">🎁 ${prize}</div>` : ''}
+                `;
+                container.appendChild(div);
+            });
+
+            updateLeaderboardTimer();
+        }
+
+        function updateLeaderboardTimer() {
+            const now = new Date();
+            const tomorrow = new Date(now);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            tomorrow.setHours(0, 0, 0, 0);
+            
+            const diff = tomorrow - now;
+            const hours = Math.floor(diff / 3600000);
+            const minutes = Math.floor((diff % 3600000) / 60000);
+            const seconds = Math.floor((diff % 60000) / 1000);
+            
+            const timerEl = document.getElementById('leaderboardTimer');
+            if (timerEl) {
+                timerEl.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                setTimeout(updateLeaderboardTimer, 1000);
+            }
+        }
+
+        function renderTransactionHistory() {
+            const container = document.getElementById('transactionList');
+            container.innerHTML = '';
+
+            if (transactions.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666;">No transactions yet</p>';
+                return;
+            }
+
+            transactions.forEach(tx => {
+                const div = document.createElement('div');
+                div.className = 'transaction-item';
+                div.innerHTML = `
+                    <div class="transaction-info">
+                        <p>${tx.description}</p>
+                        <p>${tx.date}</p>
+                    </div>
+                    <div class="transaction-amount ${tx.amount >= 0 ? 'positive' : 'negative'}">
+                        ${tx.amount >= 0 ? '+' : ''}${tx.amount.toLocaleString()}
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            if (confirm('Are you sure you want to reset the game?')) {
+                localStorage.clear();
+                location.reload();
+            }
+        });
+
+        window.onload = () => {
+            init();
+        };
+    </script>
+</body>
+</html>
